@@ -58,7 +58,11 @@ class AlignedDataset(BaseDataset):
         C_tensor = transform(C)
 
         E_path = os.path.join(self.e_name[index])
-        E = Image.open(E_path).convert('L')
+        # check if E_path exists
+        if not os.path.exists(E_path):
+            E = C.convert('L').point(lambda p: 255 if p < 220 else 0)
+        else:
+            E = Image.open(E_path).convert('L')
         E_tensor = transform_E(E)
 
         input_dict = { 'image': I_tensor,'clothes': C_tensor, 'edge': E_tensor, 'p_name':self.im_name[index].split('/')[-1]}
